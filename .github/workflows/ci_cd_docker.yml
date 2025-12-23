@@ -28,7 +28,7 @@ jobs:
     - name: Train Model using MLflow Run
       run: |
         cd MLProject
-        mlflow run . --env-manager=local
+        mlflow run . --env-manager=local --experiment-name CI_CD_Experiment
 
 
     - name: Read Run ID
