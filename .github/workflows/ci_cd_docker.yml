@@ -18,20 +18,24 @@ jobs:
       with:
         python-version: '3.9'
 
+
     - name: Install Dependencies
       run: |
-        pip install mlflow==2.19.0 pandas scikit-learn numpy
+        python -m pip install --upgrade pip
+        pip install mlflow pandas scikit-learn numpy
 
-    - name: Train Model & Generate Run ID
+
+    - name: Train Model using MLflow Run
       run: |
-        # Perhatikan: Langsung masuk ke MLProject
         cd MLProject
-        python modelling.py
+        mlflow run . --env-manager=local
+
 
     - name: Read Run ID
       id: get_run_id
       run: |
         cd MLProject
+        # Pastikan modelling.py kamu membuat file run_id.txt
         run_id=$(cat run_id.txt)
         echo "Detected Run ID: $run_id"
         echo "run_id=$run_id" >> $GITHUB_OUTPUT
@@ -44,6 +48,7 @@ jobs:
 
     - name: Build & Push Docker Image
       env:
+  
         MLFLOW_TRACKING_URI: file:./MLProject/mlruns
       run: |
         RUN_ID=${{ steps.get_run_id.outputs.run_id }}
